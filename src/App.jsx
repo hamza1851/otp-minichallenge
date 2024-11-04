@@ -1,9 +1,10 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import "./App.css"
 
 function App() {
   const initialVal = Array(6).fill("")
   const [nums, setNums] = useState(initialVal)
+  const inputRefs = useRef([])
 
   const handleInput = (e, idx) => {
     const value = e.target.value
@@ -13,7 +14,7 @@ function App() {
       setNums(newNums)
 
       if (idx < nums.length - 1) {
-        document.getElementById(`otp-input-${idx + 1}`).focus()
+        inputRefs.current[idx + 1].focus()
       }
     }
   }
@@ -22,9 +23,10 @@ function App() {
     if (e.key === "Backspace") {
       const newNums = [...nums]
       if (!newNums[idx] && idx > 0) {
-        document.getElementById(`otp-input-${idx - 1}`).focus()
+        inputRefs.current[idx - 1].focus()
       }
       newNums[idx] = ""
+
       setNums(newNums)
     }
   }
@@ -36,7 +38,7 @@ function App() {
           className="nums"
           type="text"
           key={idx}
-          id={`otp-input-${idx}`}
+          ref={(el) => (inputRefs.current[idx] = el)}
           onChange={(e) => handleInput(e, idx)}
           onKeyDown={(e) => handleBackspace(e, idx)}
           value={num}
